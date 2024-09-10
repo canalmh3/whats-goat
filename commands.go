@@ -14,7 +14,7 @@ func cmdGetGroup(args []string) (output string) {
 		log.Errorf("%s", output)
 		return
 	}
-	group, ok := parseJID(args[0])
+	group, ok := ParseJID(args[0])
 	if !ok {
 		output = "\n[getgroup] You need to specify a valid group JID"
 		log.Errorf("%s", output)
@@ -58,7 +58,7 @@ func cmdSendSpoofedReply(args []string) (output string) {
 		return
 	}
 
-	chat_jid, ok := parseJID(args[0])
+	chat_jid, ok := ParseJID(args[0])
 	if !ok {
 		output = "\n[send-spoofed-reply] You need to specify a valid Chat ID (Group or User)"
 		log.Errorf("%s", output)
@@ -70,7 +70,7 @@ func cmdSendSpoofedReply(args []string) (output string) {
 		msgID = cli.GenerateMessageID()
 	}
 
-	spoofed_jid, ok2 := parseJID(args[2])
+	spoofed_jid, ok2 := ParseJID(args[2])
 	if !ok2 {
 		output = "\n[send-spoofed-reply] You need to specify a valid User ID to spoof"
 		log.Errorf("%s", output)
@@ -99,7 +99,7 @@ func cmdSendSpoofedImgReply(args []string) (output string) {
 		log.Errorf("%s", output)
 		return
 	}
-	chat_jid, ok := parseJID(args[0])
+	chat_jid, ok := ParseJID(args[0])
 	if !ok {
 		output = "\n[send-spoofed-img-reply] You need to specify a valid Chat ID (Group or User)"
 		log.Errorf("%s", output)
@@ -111,7 +111,7 @@ func cmdSendSpoofedImgReply(args []string) (output string) {
 		msgID = cli.GenerateMessageID()
 	}
 
-	spoofed_jid, ok2 := parseJID(args[2])
+	spoofed_jid, ok2 := ParseJID(args[2])
 	if !ok2 {
 		output = "\n[send-spoofed-img-reply] You need to specify a valid User ID to spoof"
 		log.Errorf("%s", output)
@@ -161,13 +161,13 @@ func cmdSendSpoofedDemo(args []string) (output string) {
 		language = args[1]
 	}
 
-	chat_jid, ok := parseJID(args[2])
+	chat_jid, ok := ParseJID(args[2])
 	if !ok {
 		output = "\n[send-spoofed-demo] You need to specify a valid Chat ID (Group or User)"
 		log.Errorf("%s", output)
 		return
 	}
-	spoofed_jid, ok2 := parseJID(args[3])
+	spoofed_jid, ok2 := ParseJID(args[3])
 	if !ok2 {
 		output = "\n[send-spoofed-demo] You need to specify a valid User ID to spoof"
 		log.Errorf("%s", output)
@@ -203,13 +203,13 @@ func cmdSendSpoofedDemoImg(args []string) (output string) {
 		language = args[1]
 	}
 
-	chat_jid, ok := parseJID(args[2])
+	chat_jid, ok := ParseJID(args[2])
 	if !ok {
 		output = "\n[send-spoofed-demo-img] You need to specify a valid Chat ID (Group or User)"
 		log.Errorf("%s", output)
 		return
 	}
-	spoofed_jid, ok2 := parseJID(args[3])
+	spoofed_jid, ok2 := ParseJID(args[3])
 	if !ok2 {
 		output = "\n[send-spoofed-demo-img] You need to specify a valid User ID to spoof"
 		log.Errorf("%s", output)
@@ -230,7 +230,7 @@ func cmdSpoofedReplyThis(args []string, msg *waProto.Message) (output string) {
 		return
 	}
 
-	chat_jid, ok := parseJID(args[0])
+	chat_jid, ok := ParseJID(args[0])
 	if !ok {
 		output = "\n[send-spoofed-reply] You need to specify a valid Chat ID (Group or User)"
 		log.Errorf("%s", output)
@@ -242,7 +242,7 @@ func cmdSpoofedReplyThis(args []string, msg *waProto.Message) (output string) {
 		msgID = cli.GenerateMessageID()
 	}
 
-	spoofed_jid, ok2 := parseJID(args[2])
+	spoofed_jid, ok2 := ParseJID(args[2])
 	if !ok2 {
 		output = "\n[send-spoofed-reply] You need to specify a valid User ID to spoof"
 		log.Errorf("%s", output)
