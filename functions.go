@@ -268,21 +268,73 @@ func download(evt_type string, file interface{}, mimetype string, evt *events.Me
 	return errors.New("File is nil")
 }
 
-func parseJID(arg string) (types.JID, bool) {
-	if arg[0] == '+' {
-		arg = arg[1:]
+// ParseJID parses a JID out of the given string. It supports both regular and AD JIDs.
+func ParseJID(jid string) (JID, error) {
+	parts := strings.Split(jid, "@")
+	if len(parts) == 1 {
+		return NewJID("", parts[0]), nil
 	}
-	if !strings.ContainsRune(arg, '@') {
-		return types.NewJID(arg, types.DefaultUserServer), true
-	} else {
-		recipient, err := types.ParseJID(arg)
-		if err != nil {
-			log.Errorf("Invalid JID %s: %v", arg, err)
-			return recipient, false
-		} else if recipient.User == "" {
-			log.Errorf("Invalid JID %s: no server specified", arg)
-			return recipient, false
+	parsedJID := JID{User: parts[0], Server: parts[1]}
+	if strings.ContainsRune(parsedJID.User, '.') {
+		parts = strings.Split(parsedJID.User, ".")
+		if len(parts) != 2 {
+			return parsedJID, fmt.Errorf("unexpected number of dots in JID")
 		}
-		return recipient, true
+		parsedJID.User = parts[0]
+		ad := parts[1]
+		parts = strings.Split(ad, ":")
+		if len(parts) > 2 {
+			return parsedJID, fmt.Errorf("unexpected number of colons in JID")
+		}
+		agent, err := strconv.Atoi(parts[0])
+		if err != nil {
+			return parsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
+		}
+		parsedJID.RawAgent = uint8(agent)
+		if len(parts) == 2 {
+			device, err := strconv.Atoi(parts[1])
+			if err != nil {
+				return parsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
+			}
+			parsedJID.Device = uint16(device)
+		}
+	} else if strings.ContainsRune(parsedJID.User, ':') {
+		parts = strings.Split(parsedJID.User, ":")
+		if len(parts) != 2 {
+			return parsedJID, fmt.Errorf("unexpected number of colons in JID")
+		}
+		parsedJID.User = parts[0]
+		device, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return parsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
+		}
+		parsedJID.Device = uint16(device)
+	}
+	return parsedJID, nil
+}
+
+// NewJID creates a new regular JID.
+func NewJID(user, server string) JID {
+	return JID{
+		User:   user,
+		Server: server,
+	}
+}
+
+func (jid JID) ADString() string {
+	return fmt.Sprintf("%s.%d:%d@%s", jid.User, jid.RawAgent, jid.Device, jid.Server)
+}
+
+// String converts the JID to a string representation.
+// The output string can be parsed with ParseJID.
+func (jid JID) String() string {
+	if jid.RawAgent > 0 {
+		return fmt.Sprintf("%s.%d:%d@%s", jid.User, jid.RawAgent, jid.Device, jid.Server)
+	} else if jid.Device > 0 {
+		return fmt.Sprintf("%s:%d@%s", jid.User, jid.Device, jid.Server)
+	} else if len(jid.User) > 0 {
+		return fmt.Sprintf("%s@%s", jid.User, jid.Server)
+	} else {
+		return jid.Server
 	}
 }
