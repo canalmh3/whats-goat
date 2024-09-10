@@ -274,43 +274,43 @@ func ParseJID(jid string) (JID, error) {
 	if len(parts) == 1 {
 		return NewJID("", parts[0]), nil
 	}
-	parsedJID := JID{User: parts[0], Server: parts[1]}
-	if strings.ContainsRune(parsedJID.User, '.') {
-		parts = strings.Split(parsedJID.User, ".")
+	ParsedJID := JID{User: parts[0], Server: parts[1]}
+	if strings.ContainsRune(ParsedJID.User, '.') {
+		parts = strings.Split(ParsedJID.User, ".")
 		if len(parts) != 2 {
-			return parsedJID, fmt.Errorf("unexpected number of dots in JID")
+			return ParsedJID, fmt.Errorf("unexpected number of dots in JID")
 		}
-		parsedJID.User = parts[0]
+		ParsedJID.User = parts[0]
 		ad := parts[1]
 		parts = strings.Split(ad, ":")
 		if len(parts) > 2 {
-			return parsedJID, fmt.Errorf("unexpected number of colons in JID")
+			return ParsedJID, fmt.Errorf("unexpected number of colons in JID")
 		}
 		agent, err := strconv.Atoi(parts[0])
 		if err != nil {
-			return parsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
+			return ParsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
 		}
-		parsedJID.RawAgent = uint8(agent)
+		ParsedJID.RawAgent = uint8(agent)
 		if len(parts) == 2 {
 			device, err := strconv.Atoi(parts[1])
 			if err != nil {
-				return parsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
+				return ParsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
 			}
-			parsedJID.Device = uint16(device)
+			ParsedJID.Device = uint16(device)
 		}
-	} else if strings.ContainsRune(parsedJID.User, ':') {
-		parts = strings.Split(parsedJID.User, ":")
+	} else if strings.ContainsRune(ParsedJID.User, ':') {
+		parts = strings.Split(ParsedJID.User, ":")
 		if len(parts) != 2 {
-			return parsedJID, fmt.Errorf("unexpected number of colons in JID")
+			return ParsedJID, fmt.Errorf("unexpected number of colons in JID")
 		}
-		parsedJID.User = parts[0]
+		ParsedJID.User = parts[0]
 		device, err := strconv.Atoi(parts[1])
 		if err != nil {
-			return parsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
+			return ParsedJID, fmt.Errorf("failed to parse device from JID: %w", err)
 		}
-		parsedJID.Device = uint16(device)
+		ParsedJID.Device = uint16(device)
 	}
-	return parsedJID, nil
+	return ParsedJID, nil
 }
 
 // NewJID creates a new regular JID.
